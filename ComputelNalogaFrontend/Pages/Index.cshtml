@@ -9,6 +9,8 @@
     <a href="/Create">Create New</a>
 </p>
 
+<input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search by equipment...">
+
 <table class="table" id="carTable">
     <thead>
         <tr>
@@ -17,7 +19,7 @@
             <th>Vehicle Make</th>
             <th>License</th>
             <th>Tracker Device Id</th>
-            <th>Description</th>
+            <th>Equipment</th>
             <th></th>
         </tr>
     </thead>
@@ -28,7 +30,7 @@
 
 <script>
     async function fetchData() {
-        const response = await fetch('https://localhost:44391/cars'); 
+        const response = await fetch('https://localhost:44391/cars');
         const data = await response.json();
         return data;
     }
@@ -49,22 +51,21 @@
         cars.forEach(car => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                        <td>${car.shortName}</td>
-                        <td>${enumNames[car.purpose]}</td>
-                        <td>${car.vehicleMake}</td>
-                        <td>${car.license}</td>
-                        <td>${car.trackerDeviceId}</td>
-                        <td>${car.description}</td>
-                        <td> <a href="/Edit?id=${car.id}">Edit</a></td> <button onclick="deleteCar(${car.id})">Delete</button></td>
-                    `;
+                    <td>${car.shortName}</td>
+                    <td>${enumNames[car.purpose]}</td>
+                    <td>${car.vehicleMake}</td>
+                    <td>${car.license}</td>
+                    <td>${car.trackerDeviceId}</td>
+                    <td>${car.description}</td>
+                    <td>
+                        <a href="/Edit?id=${car.id}">Edit</a>
+                        <button onclick="deleteCar(${car.id})">Delete</button>
+                    </td>
+                `;
             tbody.appendChild(row);
         });
     }
 
-    window.onload = updateTable;
-</script>
-
-<script>
     async function deleteCar(id) {
         try {
             const response = await fetch(`https://localhost:44391/DeleteCar?id=${id}`, {
@@ -80,12 +81,32 @@
         }
         updateTable();
     }
-</script>
 
-<script>
     async function editCar(id) {
         const editUrl = `https://localhost:44391/Edit?id=${id}`;
-
         window.location.href = editUrl;
     }
+
+    function searchTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const rows = document.querySelectorAll('#carTable tbody tr');
+
+        rows.forEach(row => {
+            const descriptionCell = row.getElementsByTagName('td')[5];
+            if (descriptionCell) {
+                const textValue = descriptionCell.textContent || descriptionCell.innerText;
+                if (textValue.toUpperCase().indexOf(filter) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    window.onload = () => {
+        updateTable(); 
+        document.getElementById('searchInput').addEventListener('keyup', searchTable); // Add event listener for search input
+    };
 </script>
