@@ -1,0 +1,100 @@
+﻿@page
+@model ComputelNaloga.Models.Car
+@{
+}
+
+
+<h1>Create</h1>
+
+<h4>Car</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="createCarForm">
+            <div class="form-group">
+                <label for="ShortName" class="control-label">Short Name</label>
+                <input id="ShortName" name="ShortName" class="form-control" />
+                <span id="ShortName-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Purpose" class="control-label">Purpose</label>
+                <select id="Purpose" name="Purpose" class="form-control"></select>
+                <span id="Purpose-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="VehicleMake" class="control-label">Vehicle Make</label>
+                <input id="VehicleMake" name="VehicleMake" class="form-control" />
+                <span id="VehicleMake-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="License" class="control-label">License</label>
+                <input id="License" name="License" class="form-control" />
+                <span id="License-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="TrackerDeviceId" class="control-label">Tracker Device Id</label>
+                <input id="TrackerDeviceId" name="TrackerDeviceId" class="form-control" />
+                <span id="TrackerDeviceId-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Description" class="control-label">Description</label>
+                <input id="Description" name="Description" class="form-control" />
+                <span id="Description-validation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="/Index">Back to List</a>
+</div>
+
+<script>
+    window.onload = async function () {
+        const purposeDropdown = document.getElementById('Purpose');
+
+        // Fetch enum values from the API
+        const response = await fetch('https://localhost:44391/carPurposeEnumValues');
+        const enumValues = await response.json();
+
+        purposeDropdown.innerHTML = '';
+
+        enumValues.forEach(value => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.text = value;
+            purposeDropdown.appendChild(option);
+        });
+
+        document.getElementById('createCarForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const createUrl = `https://localhost:44391/CreateCar`;
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch(createUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    console.log('Car created successfully');
+                    window.location.href = '/Index';
+                } else {
+                    console.error('Failed to create car');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    };
+</script>
+
+<script>
+    async function populatePurposeDropdown(carData) {
+    }
+</script>

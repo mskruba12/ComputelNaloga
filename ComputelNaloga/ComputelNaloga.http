@@ -1,0 +1,6 @@
+@ComputelNaloga_HostAddress = http://localhost:5293
+
+GET {{ComputelNaloga_HostAddress}}/Cars/
+Accept: application/json
+
+###
